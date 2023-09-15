@@ -1,3 +1,5 @@
+package co.edu.uptc.so.simluador_backend.process_module;
+
 import java.util.LinkedList;
 import java.util.Queue;
 

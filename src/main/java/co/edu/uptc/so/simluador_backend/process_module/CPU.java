@@ -1,3 +1,5 @@
+package co.edu.uptc.so.simluador_backend.process_module;
+
 // Clase CPU
 public class CPU {
     private Process runningProcess;
@@ -15,5 +17,13 @@ public class CPU {
     public void release() {
         runningProcess = null;
         status = CPU_Status.IDLE;
+    }
+
+    public Process getRunningProcess() {
+        return runningProcess;
+    }
+
+    public CPU_Status getStatus() {
+        return status;
     }
 }
