@@ -1,6 +1,8 @@
 package co.edu.uptc.so.simluador_backend.process_module;
+
 // Clase Process
 public class Process {
+    private int id;
     private int lifeTime;
     private int IOTime;
     private int nextIOTime;
@@ -10,7 +12,8 @@ public class Process {
     private ProcessStatus status;
     private int quantum;
 
-    public Process(int lifeTime, int IOTime, int quantum) {
+    public Process(int id, int lifeTime, int IOTime, int quantum) {
+        this.id = id;
         this.lifeTime = lifeTime;
         this.IOTime = IOTime;
         this.nextIOTime = IOTime;
@@ -19,6 +22,22 @@ public class Process {
         this.IOTimeToLive = IOTime;
         this.status = ProcessStatus.READY;
         this.quantum = quantum;
+    }
+
+    public void substractTTL(){
+        timeToLive--;
+    }
+
+    public void substracQuantum(){
+        quantum--;
+    }
+
+    public void substractNextIOTTL(){
+        nextIOTTL--;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public int getLifeTime() {
@@ -85,5 +104,13 @@ public class Process {
         this.quantum = quantum;
     }
 
+    @Override
+    public String toString() {
+        return "Process [id=" + id + ", life_Time=" + lifeTime + ", IO_Time=" + IOTime + ", next_IO_Time=" + nextIOTime
+                + ", time_To_Live=" + timeToLive + ", next_IO_TTL=" + nextIOTTL + ", IO_Time_To_Live=" + IOTimeToLive
+                + ", status=" + status + ", quantum=" + quantum + "]";
+    }
+
     
+
 }

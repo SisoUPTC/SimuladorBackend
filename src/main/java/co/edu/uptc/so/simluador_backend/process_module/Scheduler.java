@@ -25,4 +25,12 @@ public class Scheduler {
     public Process getNextProcess() {
         return readyQueue.poll();
     }
+
+    public Queue<Process> getBlockedQueue() {
+        return blockedQueue;
+    }
+
+    public Queue<Process> getReadyQueue() {
+        return readyQueue;
+    }
 }
