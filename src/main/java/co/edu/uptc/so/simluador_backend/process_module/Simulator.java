@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import org.springframework.stereotype.Component;
@@ -12,27 +11,25 @@ import co.edu.uptc.so.simluador_backend.DTO.Data;
 import co.edu.uptc.so.simluador_backend.util.RandomUltil;
 
 // Clase Simulator
-
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @Component
 public class Simulator {
+    public static final int QUANTUM = 3;
     private int simulationTime;
     private int delay;
-    private int maxNextProcessTime;
     private int nextProcessTime;
+    private int maxNextProcessTime;
     private int maxNextIOTime;
     private int maxProccessLifeTime;
     private int maxIOExecutionTime;
-    private int quantum;
     private int clock;
     private Scheduler scheduler;
     private CPU cpu;
     private ArrayList<Data> data;
     private int processCount;
-    private ArrayList<String> events;
 
     public Simulator() {
         this.simulationTime = 50;
@@ -41,7 +38,6 @@ public class Simulator {
         this.maxIOExecutionTime = 4;
         this.maxNextProcessTime = 5;
         this.maxProccessLifeTime = 20;
-        this.quantum = 3;
         init();
     }
 
@@ -52,19 +48,17 @@ public class Simulator {
         this.data = new ArrayList<>();
         this.nextProcessTime = 0;
         this.processCount = 0;
-        this.events = new ArrayList<>();
     }
 
     public void start() {
         init();
         while (!endSimulation()) {
-            events.add("The next process will be created in " + nextProcessTime);
-            checkQueues();
-            createProcess();
-            updateTimes();
             addData();
+            data.get(clock).getEvents().add("The next process will be created in " + nextProcessTime);
+            createProcess();
+            checkQueues();
+            updateTimes();
             nextClock();
-            nextProcessTime--;
         }
     }
 
@@ -73,9 +67,9 @@ public class Simulator {
             cpu.getRunningProcess().substractTTL();
             cpu.getRunningProcess().substracQuantum();
             cpu.getRunningProcess().substractNextIOTTL();
-        } else if (1 == 0) {
-            // TODO
         }
+        scheduler.getBlockedQueue().forEach(Process::substractIOTTL);
+        nextProcessTime--;
     }
 
     private void createProcess() {
@@ -88,17 +82,17 @@ public class Simulator {
 
     private void assignProcess() {
         Process process = new Process(processCount, RandomUltil.random(maxProccessLifeTime),
-                RandomUltil.random(maxNextIOTime), quantum);
-        events.add("Process " + processCount + " was created.");
+                RandomUltil.random(maxIOExecutionTime),
+                RandomUltil.random(maxNextIOTime), QUANTUM);
+        data.get(clock).getEvents().add("Process " + processCount + " was created.");
 
         if (cpu.getStatus().equals(CPU_Status.IDLE)) {
             this.cpu.assignProcess(process);
-            process.setStatus(ProcessStatus.RUNNING);
-            events.add("Process  " + processCount + " was assigned to CPU.");
+            data.get(clock).getEvents().add("Process " + processCount + " was assigned to CPU.");
         } else {
-            this.scheduler.addToReadyQueue(process);
+            this.scheduler.toReady(process);
             process.setStatus(ProcessStatus.READY);
-            events.add("Process " + processCount + " was assigned to ready processes queue.");
+            data.get(clock).getEvents().add("Process " + processCount + " was assigned to ready processes queue.");
         }
     }
 
@@ -107,15 +101,54 @@ public class Simulator {
     }
 
     private void checkQueues() {
-        // TODO
+
+        // Desbloquear procesos que ya terminaron su operación de IO
+        scheduler.getBlockedQueue().forEach(process -> {
+            if (process.getIOTimeToLive() <= 0) {
+                scheduler.unlockProcess(process);
+                data.get(clock).getEvents().add("Process  " + process.getId() + " was moved to ready processes queue.");
+                process.setNextIOTime(RandomUltil.random(maxNextIOTime));
+                process.setIOTimeToLive(process.getIOTime());
+            }
+        });
+
+        // Siguiente proceso en la cola de procesos listos si CPU esta disponible
+        if (cpu.getStatus().equals(CPU_Status.IDLE)) {
+            if (!scheduler.getReadyQueue().isEmpty()) {
+                cpu.assignProcess(scheduler.getNextProcess());
+                data.get(clock).getEvents()
+                        .add("Process  " + cpu.getRunningProcess().getId() + " was assigned to CPU.");
+            }
+        } else {
+            Process ruuningProcess = cpu.getRunningProcess();
+            // Verificar TTL, QUANTUM y IO del proceso en la cpu
+            if (ruuningProcess.getTimeToLive() <= 0) {
+                scheduler.toEnded(ruuningProcess);
+                data.get(clock).getEvents()
+                        .add("Process  " + ruuningProcess.getId() + " was assigned to ended processes queue.");
+                cpu.release();
+                data.get(clock).getEvents().add("CPU is IDLE!");
+            } else if (ruuningProcess.getNextIOTTL() <= 0) {
+                scheduler.toBlock(ruuningProcess);
+                data.get(clock).getEvents().add("Status of process " + ruuningProcess.getId() + " is BLOCKED.");
+                cpu.release();
+                data.get(clock).getEvents().add("CPU is IDLE!");
+            } else if (ruuningProcess.getQuantum() <= 0) {
+                scheduler.toReady(ruuningProcess);
+                data.get(clock).getEvents()
+                        .add("Process  " + ruuningProcess.getId() + " was assigned to ready processes queue.");
+                cpu.release();
+                data.get(clock).getEvents().add("CPU is IDLE!");
+            }
+        }
     }
 
     private void addData() {
-        Data newData = new Data(clock, cpu.getStatus(), new Process(cpu.getRunningProcess()),
+        Data newData = new Data(clock, cpu.getStatus(),
+                cpu.getStatus().equals(CPU_Status.BUSY) ? new Process(cpu.getRunningProcess()) : null,
                 new LinkedList<>(scheduler.getReadyQueue()),
-                new LinkedList<>(scheduler.getBlockedQueue()), new ArrayList<>(events));
+                new LinkedList<>(scheduler.getBlockedQueue()), new ArrayList<>());
         this.data.add(newData);
-        events.clear();
     }
 
     private boolean endSimulation() {

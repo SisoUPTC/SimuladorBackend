@@ -24,14 +24,14 @@ public class Process {
     private ProcessStatus status;
     private int quantum;
 
-    public Process(int id, int lifeTime, int IOTime, int quantum) {
+    public Process(int id, int lifeTime, int IOTime, int nextIOTime, int quantum) {
         this.id = id;
         this.lifeTime = lifeTime;
-        this.IOTime = IOTime;
-        this.nextIOTime = IOTime;
         this.timeToLive = lifeTime;
-        this.nextIOTTL = IOTime;
+        this.IOTime = IOTime;
         this.IOTimeToLive = IOTime;
+        this.nextIOTime = nextIOTime;
+        this.nextIOTTL = nextIOTime;
         this.status = ProcessStatus.READY;
         this.quantum = quantum;
     }
@@ -58,5 +58,13 @@ public class Process {
 
     public void substractNextIOTTL() {
         nextIOTTL--;
+    }
+
+    public void substractIOTTL() {
+        IOTimeToLive--;
+    }
+
+    public void restartQuantum() {
+        quantum = Simulator.QUANTUM;
     }
 }

@@ -5,34 +5,46 @@ import java.util.Queue;
 
 import org.springframework.stereotype.Component;
 
+import lombok.Getter;
+
 // Clase Scheduler
+@Getter
 @Component
 public class Scheduler {
     private Queue<Process> readyQueue;
     private Queue<Process> blockedQueue;
+    private Queue<Process> endedQueue;
 
     public Scheduler() {
         readyQueue = new LinkedList<>();
         blockedQueue = new LinkedList<>();
+        endedQueue = new LinkedList<>();
     }
 
-    public void addToReadyQueue(Process process) {
+    public void toReady(Process process) {
+        process.setStatus(ProcessStatus.READY);
+        if (process.getQuantum() <= 0) {
+            process.restartQuantum();
+        }
         readyQueue.add(process);
     }
 
-    public void addToBlockedQueue(Process process) {
+    public void toBlock(Process process) {
+        process.setStatus(ProcessStatus.BLOCKED);
         blockedQueue.add(process);
+    }
+
+    public void toEnded(Process process) {
+        process.setStatus(ProcessStatus.ENDED);
+        endedQueue.add(process);
     }
 
     public Process getNextProcess() {
         return readyQueue.poll();
     }
 
-    public Queue<Process> getBlockedQueue() {
-        return blockedQueue;
-    }
-
-    public Queue<Process> getReadyQueue() {
-        return readyQueue;
+    public void unlockProcess(Process process) {
+        blockedQueue.remove(process);
+        toReady(process);
     }
 }

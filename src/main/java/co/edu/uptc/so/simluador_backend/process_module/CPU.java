@@ -18,6 +18,7 @@ public class CPU {
     public void assignProcess(Process process) {
         runningProcess = process;
         status = CPU_Status.BUSY;
+        process.setStatus(ProcessStatus.RUNNING);
     }
 
     public void release() {
