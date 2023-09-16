@@ -3,6 +3,8 @@ package co.edu.uptc.so.simluador_backend.process_module;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import co.edu.uptc.so.simluador_backend.util.RandomUltil;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @Component
 public class Simulator {
@@ -58,20 +61,20 @@ public class Simulator {
             events.add("The next process will be created in " + nextProcessTime);
             checkQueues();
             createProcess();
-            addData();
             updateTimes();
+            addData();
             nextClock();
+            nextProcessTime--;
         }
     }
 
     private void updateTimes() {
-        nextProcessTime--;
         if (this.cpu.getStatus().equals(CPU_Status.BUSY)) {
             cpu.getRunningProcess().substractTTL();
             cpu.getRunningProcess().substracQuantum();
             cpu.getRunningProcess().substractNextIOTTL();
         } else if (1 == 0) {
-            // TODO4
+            // TODO
         }
     }
 
@@ -112,20 +115,11 @@ public class Simulator {
                 new LinkedList<>(scheduler.getReadyQueue()),
                 new LinkedList<>(scheduler.getBlockedQueue()), new ArrayList<>(events));
         this.data.add(newData);
-        events.removeAll(events);
+        events.clear();
     }
 
     private boolean endSimulation() {
         return clock >= simulationTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Simulator [simulationTime=" + simulationTime + ", delay=" + delay + ", maxNextProcessTime="
-                + maxNextProcessTime + ", nextProcessTime=" + nextProcessTime + ", maxNextIOTime=" + maxNextIOTime
-                + ", maxProccessLifeTime=" + maxProccessLifeTime + ", maxIOExecutionTime=" + maxIOExecutionTime
-                + ", quantum=" + quantum + ", clock=" + clock + ", scheduler=" + scheduler + ", cpu=" + cpu + ", data="
-                + data + ", processCount=" + processCount + ", events=" + events + "]";
     }
 
 }

@@ -5,10 +5,12 @@ import org.springframework.stereotype.Component;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 // Clase Process
 @Getter
 @Setter
+@ToString
 @Component
 @NoArgsConstructor
 public class Process {
@@ -38,10 +40,10 @@ public class Process {
         this.id = process.id;
         this.lifeTime = process.lifeTime;
         this.IOTime = process.IOTime;
-        this.nextIOTime = process.IOTime;
-        this.timeToLive = process.lifeTime;
-        this.nextIOTTL = process.IOTime;
-        this.IOTimeToLive = process.IOTime;
+        this.nextIOTime = process.nextIOTime;
+        this.timeToLive = process.timeToLive;
+        this.nextIOTTL = process.nextIOTTL;
+        this.IOTimeToLive = process.IOTimeToLive;
         this.status = process.status;
         this.quantum = process.quantum;
     }

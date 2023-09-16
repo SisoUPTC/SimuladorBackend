@@ -1,7 +1,5 @@
 package co.edu.uptc.so.simluador_backend.controller;
 
-import java.util.ArrayList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
