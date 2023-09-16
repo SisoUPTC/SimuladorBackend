@@ -6,7 +6,7 @@ public final class RandomUltil {
     private static Random random = new Random();
 
     public static int random(int value) {
-        return random.nextInt(value);
+        return random.nextInt(value)+1;
     }
 
     private RandomUltil() {

@@ -1,6 +1,16 @@
 package co.edu.uptc.so.simluador_backend.process_module;
 
+import org.springframework.stereotype.Component;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 // Clase Process
+@Getter
+@Setter
+@Component
+@NoArgsConstructor
 public class Process {
     private int id;
     private int lifeTime;
@@ -24,93 +34,27 @@ public class Process {
         this.quantum = quantum;
     }
 
-    public void substractTTL(){
+    public Process(Process process) {
+        this.id = process.id;
+        this.lifeTime = process.lifeTime;
+        this.IOTime = process.IOTime;
+        this.nextIOTime = process.IOTime;
+        this.timeToLive = process.lifeTime;
+        this.nextIOTTL = process.IOTime;
+        this.IOTimeToLive = process.IOTime;
+        this.status = process.status;
+        this.quantum = process.quantum;
+    }
+
+    public void substractTTL() {
         timeToLive--;
     }
 
-    public void substracQuantum(){
+    public void substracQuantum() {
         quantum--;
     }
 
-    public void substractNextIOTTL(){
+    public void substractNextIOTTL() {
         nextIOTTL--;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getLifeTime() {
-        return lifeTime;
-    }
-
-    public int getIOTime() {
-        return IOTime;
-    }
-
-    public int getNextIOTime() {
-        return nextIOTime;
-    }
-
-    public int getTimeToLive() {
-        return timeToLive;
-    }
-
-    public int getNextIOTTL() {
-        return nextIOTTL;
-    }
-
-    public int getIOTimeToLive() {
-        return IOTimeToLive;
-    }
-
-    public ProcessStatus getStatus() {
-        return status;
-    }
-
-    public int getQuantum() {
-        return quantum;
-    }
-
-    public void setLifeTime(int lifeTime) {
-        this.lifeTime = lifeTime;
-    }
-
-    public void setIOTime(int iOTime) {
-        IOTime = iOTime;
-    }
-
-    public void setNextIOTime(int nextIOTime) {
-        this.nextIOTime = nextIOTime;
-    }
-
-    public void setTimeToLive(int timeToLive) {
-        this.timeToLive = timeToLive;
-    }
-
-    public void setNextIOTTL(int nextIOTTL) {
-        this.nextIOTTL = nextIOTTL;
-    }
-
-    public void setIOTimeToLive(int iOTimeToLive) {
-        IOTimeToLive = iOTimeToLive;
-    }
-
-    public void setStatus(ProcessStatus status) {
-        this.status = status;
-    }
-
-    public void setQuantum(int quantum) {
-        this.quantum = quantum;
-    }
-
-    @Override
-    public String toString() {
-        return "Process [id=" + id + ", life_Time=" + lifeTime + ", IO_Time=" + IOTime + ", next_IO_Time=" + nextIOTime
-                + ", time_To_Live=" + timeToLive + ", next_IO_TTL=" + nextIOTTL + ", IO_Time_To_Live=" + IOTimeToLive
-                + ", status=" + status + ", quantum=" + quantum + "]";
-    }
-
-    
-
 }

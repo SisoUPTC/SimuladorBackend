@@ -9,5 +9,5 @@ public class SimluadorBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SimluadorBackendApplication.class, args);
 	}
-
+	
 }

@@ -3,8 +3,10 @@ package co.edu.uptc.so.simluador_backend.process_module;
 import java.util.LinkedList;
 import java.util.Queue;
 
-// Clase Scheduler
+import org.springframework.stereotype.Component;
 
+// Clase Scheduler
+@Component
 public class Scheduler {
     private Queue<Process> readyQueue;
     private Queue<Process> blockedQueue;

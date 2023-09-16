@@ -1,6 +1,9 @@
 package co.edu.uptc.so.simluador_backend.process_module;
 
+import org.springframework.stereotype.Component;
+
 // Clase CPU
+@Component
 public class CPU {
     private Process runningProcess;
     private CPU_Status status;
