@@ -10,16 +10,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class Data {
-    int clock;
-    CPU_Status cpuStatus;
-    Process cpuProcess;
-    Queue<Process> readyProceesses;
-    Queue<Process> blockProcesses;
-    ArrayList<String> events;
+    private int clock;
+    private CPU_Status cpuStatus;
+    private Process cpuProcess;
+    private Queue<Process> readyProceesses;
+    private Queue<Process> blockProcesses;
+    private ArrayList<String> events;
+    private int totalTimes;
+    private int endedProcesses = 0;
 }
