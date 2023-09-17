@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import org.springframework.stereotype.Component;
 import co.edu.uptc.so.simluador_backend.DTO.Data;
+import co.edu.uptc.so.simluador_backend.DTO.GraphicsDTO;
+import co.edu.uptc.so.simluador_backend.util.GraphicData;
 import co.edu.uptc.so.simluador_backend.util.RandomUltil;
 
 // Clase Simulator
@@ -32,7 +34,6 @@ public class Simulator {
     private int processCount;
 
     public Simulator() {
-        this.simulationTime = 50;
         this.delay = 1;
         this.maxNextIOTime = 4;
         this.maxIOExecutionTime = 4;
@@ -50,7 +51,7 @@ public class Simulator {
         this.processCount = 0;
     }
 
-    public void start() {
+    public boolean start() {
         init();
         while (!endSimulation()) {
             addData();
@@ -60,13 +61,18 @@ public class Simulator {
             updateTimes();
             nextClock();
         }
+        this.data.forEach(data -> data.setTotalTimes(this.data.size() - 1));
+        return true;
     }
 
     private void updateTimes() {
         if (this.cpu.getStatus().equals(CPU_Status.BUSY)) {
-            cpu.getRunningProcess().substractTTL();
-            cpu.getRunningProcess().substracQuantum();
-            cpu.getRunningProcess().substractNextIOTTL();
+            if (cpu.getRunningProcess().getTimeToLive() > 0)
+                cpu.getRunningProcess().substractTTL();
+            if (cpu.getRunningProcess().getQuantum() > 0)
+                cpu.getRunningProcess().substracQuantum();
+            if (cpu.getRunningProcess().getNextIOTTL() > 0)
+                cpu.getRunningProcess().substractNextIOTTL();
         }
         scheduler.getBlockedQueue().forEach(Process::substractIOTTL);
         nextProcessTime--;
@@ -91,7 +97,6 @@ public class Simulator {
             data.get(clock).getEvents().add("Process " + processCount + " was assigned to CPU.");
         } else {
             this.scheduler.toReady(process);
-            process.setStatus(ProcessStatus.READY);
             data.get(clock).getEvents().add("Process " + processCount + " was assigned to ready processes queue.");
         }
     }
@@ -124,6 +129,7 @@ public class Simulator {
             // Verificar TTL, QUANTUM y IO del proceso en la cpu
             if (ruuningProcess.getTimeToLive() <= 0) {
                 scheduler.toEnded(ruuningProcess);
+                data.get(clock).setEndedProcesses(data.get(clock).getEndedProcesses() + 1);
                 data.get(clock).getEvents()
                         .add("Process  " + ruuningProcess.getId() + " was assigned to ended processes queue.");
                 cpu.release();
@@ -144,15 +150,86 @@ public class Simulator {
     }
 
     private void addData() {
-        Data newData = new Data(clock, cpu.getStatus(),
-                cpu.getStatus().equals(CPU_Status.BUSY) ? new Process(cpu.getRunningProcess()) : null,
-                new LinkedList<>(scheduler.getReadyQueue()),
-                new LinkedList<>(scheduler.getBlockedQueue()), new ArrayList<>());
-        this.data.add(newData);
+        if (!this.data.isEmpty()) {
+            Data newData = new Data(clock, cpu.getStatus(),
+                    cpu.getStatus().equals(CPU_Status.BUSY) ? new Process(cpu.getRunningProcess()) : null,
+                    new LinkedList<>(), new LinkedList<>(), new ArrayList<>(), 0,
+                    this.data.get(clock - 1).getEndedProcesses());
+            this.data.add(newData);
+        } else {
+            Data newData = new Data(clock, cpu.getStatus(),
+                    cpu.getStatus().equals(CPU_Status.BUSY) ? new Process(cpu.getRunningProcess()) : null,
+                    new LinkedList<>(), new LinkedList<>(), new ArrayList<>(), 0, 0);
+            this.data.add(newData);
+        }
+        for (Process process : scheduler.getReadyQueue()) {
+            data.get(clock).getReadyProceesses().add(new Process(process));
+        }
+        for (Process process : scheduler.getBlockedQueue()) {
+            data.get(clock).getBlockProcesses().add(new Process(process));
+        }
     }
 
     private boolean endSimulation() {
         return clock >= simulationTime;
+    }
+
+    public GraphicsDTO getGraphics() {
+        int[] quantyProcessQueues = getQuantyProcessQueues();
+        GraphicData[] quantyEndendCPU = getQuantyEndendCPU();
+        int totalEndedProccess = this.data.get(this.data.size() - 1).getEndedProcesses();
+        Object[][] times = getTimes();
+        GraphicData[] timesTTL = (GraphicData[]) times[0];
+        GraphicData[] timesNextIO = (GraphicData[]) times[1];
+        GraphicData[] timesIO = (GraphicData[]) times[2];
+        GraphicsDTO graphicsDTO = new GraphicsDTO(quantyProcessQueues, quantyEndendCPU, timesTTL, timesNextIO, timesIO,
+                totalEndedProccess);
+        return graphicsDTO;
+    }
+
+    private Object[][] getTimes() {
+        GraphicData[] timesTTL = new GraphicData[this.maxProccessLifeTime + 1];
+        GraphicData[] timesNextIO = new GraphicData[this.maxNextIOTime + 1];
+        GraphicData[] timesIO = new GraphicData[this.maxIOExecutionTime + 1];
+
+        for (int i = 0; i < timesTTL.length; i++) {
+            timesTTL[i] = new GraphicData(i, 0);
+        }
+
+        for (int i = 0; i < timesNextIO.length; i++) {
+            timesNextIO[i] = new GraphicData(i, 0);
+        }
+
+        for (int i = 0; i < timesIO.length; i++) {
+            timesIO[i] = new GraphicData(i, 0);
+        }
+
+        this.data.forEach(data -> {
+            if (data.getCpuProcess() != null) {
+                timesTTL[data.getCpuProcess().getTimeToLive()]
+                        .setValue(timesTTL[data.getCpuProcess().getTimeToLive()].getValue() + 1);
+                timesNextIO[data.getCpuProcess().getNextIOTime()]
+                        .setValue(timesNextIO[data.getCpuProcess().getNextIOTime()].getValue() + 1);
+                timesIO[data.getCpuProcess().getIOTime()]
+                        .setValue(timesIO[data.getCpuProcess().getIOTime()].getValue() + 1);
+            }
+        });
+        return new Object[][] { timesTTL, timesNextIO, timesIO };
+    }
+
+    private GraphicData[] getQuantyEndendCPU() {
+        GraphicData[] quantyEndendCPU = new GraphicData[data.size()];
+        for (int i = 0; i < quantyEndendCPU.length; i += 10) {
+            quantyEndendCPU[i] = new GraphicData(i, this.data.get(i).getEndedProcesses());
+        }
+        return quantyEndendCPU;
+    }
+
+    private int[] getQuantyProcessQueues() {
+        int[] quantyProcessQueues = new int[2];
+        quantyProcessQueues[0] = scheduler.getReadyQueue().size();
+        quantyProcessQueues[1] = scheduler.getBlockedQueue().size();
+        return quantyProcessQueues;
     }
 
 }
