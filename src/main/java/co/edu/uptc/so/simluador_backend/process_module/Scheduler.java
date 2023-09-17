@@ -23,9 +23,7 @@ public class Scheduler {
 
     public void toReady(Process process) {
         process.setStatus(ProcessStatus.READY);
-        if (process.getQuantum() <= 0) {
-            process.restartQuantum();
-        }
+        process.restartQuantum();
         readyQueue.add(process);
     }
 
