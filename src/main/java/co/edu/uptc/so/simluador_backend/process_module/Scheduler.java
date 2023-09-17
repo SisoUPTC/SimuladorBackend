@@ -5,10 +5,8 @@ import java.util.Queue;
 
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
 
 // Clase Scheduler
-@Getter
 @Component
 public class Scheduler {
     private Queue<Process> readyQueue;
@@ -45,4 +43,18 @@ public class Scheduler {
         blockedQueue.remove(process);
         toReady(process);
     }
+
+    public Queue<Process> getReadyQueue() {
+        return readyQueue;
+    }
+
+    public Queue<Process> getBlockedQueue() {
+        return blockedQueue;
+    }
+
+    public Queue<Process> getEndedQueue() {
+        return endedQueue;
+    }
+
+    
 }

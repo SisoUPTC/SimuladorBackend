@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.util.JSONPObject;
-
 import co.edu.uptc.so.simluador_backend.DTO.Data;
 import co.edu.uptc.so.simluador_backend.DTO.GraphicsDTO;
 import co.edu.uptc.so.simluador_backend.services.SimulatorService;

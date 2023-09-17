@@ -2,17 +2,7 @@ package co.edu.uptc.so.simluador_backend.process_module;
 
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-// Clase Process
-@Getter
-@Setter
-@ToString
 @Component
-@NoArgsConstructor
 public class Process {
     private int id;
     private int lifeTime;
@@ -23,6 +13,8 @@ public class Process {
     private int IOTimeToLive;
     private ProcessStatus status;
     private int quantum;
+
+    public Process(){}
 
     public Process(int id, int lifeTime, int IOTime, int nextIOTime, int quantum) {
         this.id = id;
@@ -67,4 +59,79 @@ public class Process {
     public void restartQuantum() {
         quantum = Simulator.QUANTUM;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getLifeTime() {
+        return lifeTime;
+    }
+
+    public int getIOTime() {
+        return IOTime;
+    }
+
+    public int getNextIOTime() {
+        return nextIOTime;
+    }
+
+    public int getTimeToLive() {
+        return timeToLive;
+    }
+
+    public int getNextIOTTL() {
+        return nextIOTTL;
+    }
+
+    public int getIOTimeToLive() {
+        return IOTimeToLive;
+    }
+
+    public ProcessStatus getStatus() {
+        return status;
+    }
+
+    public int getQuantum() {
+        return quantum;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setLifeTime(int lifeTime) {
+        this.lifeTime = lifeTime;
+    }
+
+    public void setIOTime(int iOTime) {
+        IOTime = iOTime;
+    }
+
+    public void setNextIOTime(int nextIOTime) {
+        this.nextIOTime = nextIOTime;
+    }
+
+    public void setTimeToLive(int timeToLive) {
+        this.timeToLive = timeToLive;
+    }
+
+    public void setNextIOTTL(int nextIOTTL) {
+        this.nextIOTTL = nextIOTTL;
+    }
+
+    public void setIOTimeToLive(int iOTimeToLive) {
+        IOTimeToLive = iOTimeToLive;
+    }
+
+    public void setStatus(ProcessStatus status) {
+        this.status = status;
+    }
+
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+
+    
+
 }

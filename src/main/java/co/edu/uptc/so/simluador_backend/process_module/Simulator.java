@@ -1,9 +1,5 @@
 package co.edu.uptc.so.simluador_backend.process_module;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import org.springframework.stereotype.Component;
@@ -13,10 +9,6 @@ import co.edu.uptc.so.simluador_backend.util.GraphicData;
 import co.edu.uptc.so.simluador_backend.util.RandomUltil;
 
 // Clase Simulator
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
 @Component
 public class Simulator {
     public static final int QUANTUM = 3;
@@ -230,6 +222,14 @@ public class Simulator {
         quantyProcessQueues[0] = scheduler.getReadyQueue().size();
         quantyProcessQueues[1] = scheduler.getBlockedQueue().size();
         return quantyProcessQueues;
+    }
+
+    public ArrayList<Data> getData() {
+        return data;
+    }
+
+    public void setSimulationTime(int simulationTime) {
+        this.simulationTime = simulationTime;
     }
 
 }
