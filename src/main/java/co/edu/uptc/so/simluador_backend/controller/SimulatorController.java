@@ -16,7 +16,7 @@ import co.edu.uptc.so.simluador_backend.util.ApiRespone;
 
 @RestController
 @RequestMapping("/simulator")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://simulatorcpu.netlify.app/")
 public class SimulatorController {
 
     @Autowired
