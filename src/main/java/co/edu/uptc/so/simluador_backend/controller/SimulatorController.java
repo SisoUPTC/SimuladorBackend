@@ -76,4 +76,17 @@ public class SimulatorController {
             return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
         }
     }
+
+    // @PostMapping("/Memory")
+    // public ResponseEntity<ApiRespone> WorstFitMemory() {
+    //     try {
+    //         ApiRespone apiRespone = new ApiRespone("Procesos recibidos en el metodo WorstFit ", true, 200, "simulacion creada");
+    //         return new ResponseEntity<>(apiRespone, HttpStatus.OK);
+    //     } catch (Exception e) {
+    //         System.out.println(e.getMessage());
+    //         ApiRespone apiRespone = new ApiRespone("Error al crear la simulacion", false, 400, e);
+    //         return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
+    //     }
+    // }
+
 }
