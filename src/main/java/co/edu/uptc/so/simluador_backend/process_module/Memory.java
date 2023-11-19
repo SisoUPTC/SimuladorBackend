@@ -1,13 +1,9 @@
 package co.edu.uptc.so.simluador_backend.process_module;
 
-
 public class Memory {
-    // ArrayList<Process> processeList;
-    // ArrayList<Process> inputList;
-    int id;
-    int sizeLimit;
-    boolean allocated;
-    // int option = 1; // 1
+    protected int id;
+    protected int sizeLimit;
+    protected boolean allocated;
 
     public Memory(int id, int sizeLimit) {
         this.id = id;
@@ -15,7 +11,10 @@ public class Memory {
         this.allocated = false;
     }
 
-    public int getId(){
+    public Memory() {
+    }
+
+    public int getId() {
         return id;
     }
 
@@ -35,5 +34,3 @@ public class Memory {
         this.allocated = allocated;
     }
 }
-
-// First-fit, best-fit

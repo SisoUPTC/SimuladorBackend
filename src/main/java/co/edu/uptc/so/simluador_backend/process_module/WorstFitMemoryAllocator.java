@@ -7,9 +7,8 @@ import java.util.List;
 public class WorstFitMemoryAllocator {
     List<Memory> memory;
 
-    public WorstFitMemoryAllocator(int totalMemorySize) {
-        memory = new ArrayList<>();
-        memory.add(new Memory(0, totalMemorySize));
+    public WorstFitMemoryAllocator(List<Memory> memory) {
+        this.memory = memory;
     }
 
     public void allocateProcess(int processSize) {

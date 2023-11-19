@@ -7,6 +7,9 @@ public class MemoryBlock {
         this.size = size;
     }
 
+    public MemoryBlock() {
+    }
+
     public int getSize() {
         return size;
     }

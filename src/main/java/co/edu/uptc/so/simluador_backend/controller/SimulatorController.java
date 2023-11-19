@@ -7,10 +7,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import co.edu.uptc.so.simluador_backend.DTO.Data;
+import co.edu.uptc.so.simluador_backend.DTO.DataMemory;
 import co.edu.uptc.so.simluador_backend.DTO.GraphicsDTO;
+import co.edu.uptc.so.simluador_backend.process_module.MemoryData;
 import co.edu.uptc.so.simluador_backend.services.SimulatorService;
 import co.edu.uptc.so.simluador_backend.util.ApiRespone;
 
@@ -72,6 +75,34 @@ public class SimulatorController {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             ApiRespone apiRespone = new ApiRespone("Ha ocurrido un error al traer el estado de la simulacion", false,
+                    400, e);
+            return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/start/memory")
+    public ResponseEntity<ApiRespone> startMemory(@RequestBody DataMemory dataMemory) {
+        try {
+            simulatorService.start(dataMemory.getTime());
+            boolean result = simulatorService.startMemory(dataMemory);
+            ApiRespone apiRespone = new ApiRespone("simulacion de memoria creada exitosamente ", result, 200, "simulacion creada");
+            return new ResponseEntity<>(apiRespone, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            ApiRespone apiRespone = new ApiRespone("Error al crear la simulacion", false, 400, e);
+            return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/results/memory/{clock}")
+    public ResponseEntity<ApiRespone> resultsMemory(@PathVariable int clock) {
+        try {
+            MemoryData result = simulatorService.getResultMemory(clock);
+            ApiRespone apiRespone = new ApiRespone("resultado de la simulacion", true, 200, result);
+            return new ResponseEntity<>(apiRespone, HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            ApiRespone apiRespone = new ApiRespone("Ha ocurrido un error al traer resultados de la simulacion", false,
                     400, e);
             return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
         }
