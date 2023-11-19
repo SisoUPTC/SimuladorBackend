@@ -1,5 +1,7 @@
 package co.edu.uptc.so.simluador_backend.process_module;
 
+import java.util.Random;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,9 +14,14 @@ public class Process {
     private int nextIOTTL;
     private int IOTimeToLive;
     private ProcessStatus status;
+    private int maxSize;
+    private int size;
     private int quantum;
 
-    public Process(){}
+    public Process(){
+        this.maxSize = 1024; // MB
+        this.size = new Random().nextInt(maxSize);
+    }
 
     public Process(int id, int lifeTime, int IOTime, int nextIOTime, int quantum) {
         this.id = id;
@@ -26,6 +33,20 @@ public class Process {
         this.nextIOTTL = nextIOTime;
         this.status = ProcessStatus.READY;
         this.quantum = quantum;
+        this.maxSize = 1024; // MB
+        this.size = new Random().nextInt(maxSize);
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     public Process(Process process) {
@@ -38,6 +59,7 @@ public class Process {
         this.IOTimeToLive = process.IOTimeToLive;
         this.status = process.status;
         this.quantum = process.quantum;
+        this.size = process.size;
     }
 
     public void substractTTL() {
@@ -132,6 +154,12 @@ public class Process {
         this.quantum = quantum;
     }
 
+    @Override
+    public String toString() {
+        return "Process [id=" + id + ", timeToLive=" + timeToLive + ", maxSize=" + maxSize + ", size=" + size + "]";
+    }
+
     
 
+    
 }
