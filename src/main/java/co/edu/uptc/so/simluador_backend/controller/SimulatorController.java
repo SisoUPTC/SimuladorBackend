@@ -107,4 +107,18 @@ public class SimulatorController {
             return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/graphics/memory/{clock}")
+    public ResponseEntity<ApiRespone> graphicsMemory(@PathVariable int clock) {
+        try {
+            GraphicsMemoryDTO result = simulatorService.getGraphicsMemory(clock);
+            ApiRespone apiRespone = new ApiRespone("Graficas de la simulacion de memoria", true, 200, result);
+            return new ResponseEntity<>(apiRespone, HttpStatus.OK);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            ApiRespone apiRespone = new ApiRespone("Ha ocurrido un error al traer graficas de la memoria de la simulacion", false,
+                    400, e);
+            return new ResponseEntity<>(apiRespone, HttpStatus.BAD_REQUEST);
+        }
+    }
 }

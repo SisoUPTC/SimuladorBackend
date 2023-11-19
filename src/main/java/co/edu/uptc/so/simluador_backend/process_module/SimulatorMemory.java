@@ -1,24 +1,29 @@
 package co.edu.uptc.so.simluador_backend.process_module;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
 import co.edu.uptc.so.simluador_backend.DTO.Data;
 import co.edu.uptc.so.simluador_backend.DTO.DataMemory;
+import co.edu.uptc.so.simluador_backend.controller.GraphicsMemoryDTO;
+import co.edu.uptc.so.simluador_backend.util.GraphicData;
 
 @Component
 public class SimulatorMemory {
     private int clock;
     private ArrayList<Data> dataProccesses;
     private ArrayList<MemoryData> dataMemory;
+    private ArrayList<GraphicsMemoryDTO> dataGraphics;
     private MemoryFinal memory;
 
     public SimulatorMemory() {
         this.clock = 0;
         this.dataProccesses = new ArrayList<>();
         this.dataMemory = new ArrayList<>();
+        this.dataGraphics = new ArrayList<>();
     }
 
     public boolean start(DataMemory dataMemory, Simulator simulator) {
@@ -29,7 +34,6 @@ public class SimulatorMemory {
             case BEST_FIT -> runBestFit();
             case WORST_FIT -> runWorstFit();
             case NEXT_FIT -> runNextFit();
-
         }
         return true;
     }
@@ -37,6 +41,7 @@ public class SimulatorMemory {
     private void clearData() {
         dataMemory.clear();
         dataProccesses.clear();
+        dataGraphics.clear();
     }
 
     private void init(DataMemory dataMemory, Simulator simulator) {
@@ -68,12 +73,7 @@ public class SimulatorMemory {
                         processes.remove(i);
                     }
                 }
-            } else {
-                System.out.println("no entro");
             }
-
-            System.out.println("clock: " + actualClock);
-            System.out.println(this.memory.getBlockMemories());
 
             // agregar la data general para front
             ArrayList<BlockMemory> copyMemory = new ArrayList<>();
@@ -86,7 +86,11 @@ public class SimulatorMemory {
                 copyProccesses.add(new Process(processes.get(i)));
             }
 
-            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory , clock - 1));
+            // Agregar data para graficas
+            GraphicsMemoryDTO graphicsMemoryDTO = createDataGraphics(actualClock, copyProccesses, copyMemory, clock - 1);
+            this.dataGraphics.add(graphicsMemoryDTO);
+
+            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory, clock - 1));
 
             // reducir tiempos de vida de procesos
             reduceTTL(this.memory.getBlockMemories());
@@ -114,12 +118,7 @@ public class SimulatorMemory {
                         processes.remove(i);
                     }
                 }
-            } else {
-                System.out.println("no entro");
             }
-
-            System.out.println("clock: " + actualClock);
-            System.out.println(this.memory.getBlockMemories());
 
             // agregar la data general para front
             ArrayList<BlockMemory> copyMemory = new ArrayList<>();
@@ -132,7 +131,11 @@ public class SimulatorMemory {
                 copyProccesses.add(new Process(processes.get(i)));
             }
 
-            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory , clock - 1));
+             // Agregar data para graficas
+            GraphicsMemoryDTO graphicsMemoryDTO = createDataGraphics(actualClock, copyProccesses, copyMemory, clock - 1);
+            this.dataGraphics.add(graphicsMemoryDTO);
+
+            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory, clock - 1));
 
             // reducir tiempos de vida de procesos
             reduceTTL(this.memory.getBlockMemories());
@@ -160,12 +163,7 @@ public class SimulatorMemory {
                         processes.remove(i);
                     }
                 }
-            } else {
-                System.out.println("no entro");
             }
-
-            System.out.println("clock: " + actualClock);
-            System.out.println(this.memory.getBlockMemories());
 
             // agregar la data general para front
             ArrayList<BlockMemory> copyMemory = new ArrayList<>();
@@ -178,7 +176,11 @@ public class SimulatorMemory {
                 copyProccesses.add(new Process(processes.get(i)));
             }
 
-            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory , clock - 1));
+            // Agregar data para graficas
+            GraphicsMemoryDTO graphicsMemoryDTO = createDataGraphics(actualClock, copyProccesses, copyMemory, clock - 1);
+            this.dataGraphics.add(graphicsMemoryDTO);
+
+            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory, clock - 1));
 
             // reducir tiempos de vida de procesos
             reduceTTL(this.memory.getBlockMemories());
@@ -214,12 +216,7 @@ public class SimulatorMemory {
                         processes.remove(i);
                     }
                 }
-            } else {
-                System.out.println("no entro");
             }
-
-            System.out.println("clock: " + actualClock);
-            System.out.println(this.memory.getBlockMemories());
 
             // agregar la data general para front
             ArrayList<BlockMemory> copyMemory = new ArrayList<>();
@@ -232,7 +229,11 @@ public class SimulatorMemory {
                 copyProccesses.add(new Process(processes.get(i)));
             }
 
-            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory , clock - 1));
+             // Agregar data para graficas
+            GraphicsMemoryDTO graphicsMemoryDTO = createDataGraphics(actualClock, copyProccesses, copyMemory, clock - 1);
+            this.dataGraphics.add(graphicsMemoryDTO);
+
+            this.dataMemory.add(new MemoryData(actualClock, copyProccesses, copyMemory, clock - 1));
 
             // reducir tiempos de vida de procesos
             reduceTTL(this.memory.getBlockMemories());
@@ -259,5 +260,51 @@ public class SimulatorMemory {
 
     public ArrayList<MemoryData> getDataMemory() {
         return dataMemory;
+    }
+
+    public ArrayList<GraphicsMemoryDTO> getDataGraphics() {
+        return this.dataGraphics;
+    }
+
+    private GraphicsMemoryDTO createDataGraphics(int clock, ArrayList<Process> copyProccesses,
+            ArrayList<BlockMemory> copyMemory, int totalTimes) {
+        GraphicsMemoryDTO graphicsMemoryDTO = new GraphicsMemoryDTO();
+
+        graphicsMemoryDTO.setClock(clock);
+        graphicsMemoryDTO.setTotalTimes(totalTimes);
+
+        int quantyProcessMemory = 0, totalSpace = 0, spaceUsed = 0, spaceFree = 0, blocksFree = 0, blocksUsed = 0;
+        ArrayList<GraphicData> promedioSizeProccessList = new ArrayList<>();
+
+        for (BlockMemory blockMemory : copyMemory) {
+            if (!blockMemory.isFree()) {
+                quantyProcessMemory++;
+                blocksUsed++;
+                spaceUsed += blockMemory.getProcess().getSize();
+                promedioSizeProccessList
+                        .add(new GraphicData(blockMemory.getProcess().getSize(), blockMemory.getProcess().getSize()));
+            } else {
+                blocksFree++;
+                spaceFree += blockMemory.getSize();
+            }
+            totalSpace += blockMemory.getProcess() != null ? blockMemory.getProcess().getSize() : blockMemory.getSize();
+        }
+        graphicsMemoryDTO.setQuantyProcessMemory(quantyProcessMemory);
+
+        int percentageUse = spaceUsed * 100 / totalSpace;
+        int percentageFree = spaceFree * 100 / totalSpace;
+        GraphicData[] pomedioSizeProccess = new GraphicData[promedioSizeProccessList.size()];
+        pomedioSizeProccess = promedioSizeProccessList.toArray(pomedioSizeProccess);
+
+        graphicsMemoryDTO.setPercentageUse(percentageUse);
+        graphicsMemoryDTO.setPercentageFree(percentageFree);
+        graphicsMemoryDTO.setBlocksFree(blocksFree);
+        graphicsMemoryDTO.setBlocksUsed(blocksUsed);
+        graphicsMemoryDTO.setPromedioSizeProcess(pomedioSizeProccess);
+
+        int quantyProcessWait = copyProccesses.size();
+        graphicsMemoryDTO.setQuantyProcessWait(quantyProcessWait);
+
+        return graphicsMemoryDTO;
     }
 }
