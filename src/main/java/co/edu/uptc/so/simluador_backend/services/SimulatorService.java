@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uptc.so.simluador_backend.DTO.Data;
 import co.edu.uptc.so.simluador_backend.DTO.DataMemory;
 import co.edu.uptc.so.simluador_backend.DTO.GraphicsDTO;
+import co.edu.uptc.so.simluador_backend.controller.GraphicsMemoryDTO;
 import co.edu.uptc.so.simluador_backend.process_module.MemoryData;
 import co.edu.uptc.so.simluador_backend.process_module.Simulator;
 import co.edu.uptc.so.simluador_backend.process_module.SimulatorMemory;
@@ -39,7 +40,10 @@ public class SimulatorService {
     }
 
     public MemoryData getResultMemory(int clock) {
-        System.out.println(this.simulatorMemory.getDataMemory());
         return this.simulatorMemory.getDataMemory().get(clock);
+    }
+
+    public GraphicsMemoryDTO getGraphicsMemory(int clock) {
+        return this.simulatorMemory.getDataGraphics().get(clock);
     }
 }
