@@ -29,4 +29,6 @@ public class SimulatorService {
     public boolean isStarted() {
         return !this.simulator.getData().isEmpty();
     }
+
+    
 }
